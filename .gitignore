@@ -1,0 +1,36 @@
+# Python compiled files
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+
+# Django secret keys
+.env
+*.env
+
+# Database
+db.sqlite3
+
+# Django migrations
+*.log
+*.pot
+*.pyc
+*.pyo
+*.so
+
+# Virtual Environment
+venv/
+env/
+.env/
+.envrc
+*.env
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*~
+
+# System files
+.DS_Store
+Thumbs.db

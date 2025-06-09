@@ -1,0 +1,91 @@
+<!-- Section Title -->
+<div class="mt-8 mx-5 mb-4">
+    <h2 class="text-2xl font-bold text-gray-800">Development Concerns</h2>
+    <p class="text-gray-600">Building and construction reports from various divisions</p>
+</div>
+
+<!-- Concerns Grid -->
+<section class="m-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    {% for rs in concerns %}
+    <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+        
+        <!-- Image Section -->
+        <div class="aspect-w-16 aspect-h-12 bg-gray-200">
+            {% if rs.structure_photo %}
+                <img src="{{ rs.structure_photo.url }}" alt="Structure Photo"
+                    class="w-full h-48 object-cover">
+            {% else %}
+                <div class="w-full h-48 flex items-center justify-center text-gray-400 text-sm">
+                    No Image Available
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Content Section -->
+        <div class="p-4 space-y-3">
+            <!-- Developer Name -->
+            <h4 class="text-lg font-semibold text-gray-800">
+                <span class="text-sm text-gray-500 font-normal">Developer:</span><br>
+                {{ rs.developer_name }}
+            </h4>
+
+            <!-- Details -->
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between border-b pb-1">
+                    <span class="text-gray-500 font-medium">Division:</span>
+                    <span class="text-gray-700">{{ rs.division }}</span>
+                </div>
+                <div class="flex justify-between border-b pb-1">
+                    <span class="text-gray-500 font-medium">Ward:</span>
+                    <span class="text-gray-700">{{ rs.ward }}</span>
+                </div>
+                <div class="flex justify-between border-b pb-1">
+                    <span class="text-gray-500 font-medium">Cell:</span>
+                    <span class="text-gray-700">{{ rs.cell }}</span>
+                </div>
+                <div class="flex justify-between border-b pb-1">
+                    <span class="text-gray-500 font-medium">Property No:</span>
+                    <span class="text-gray-700">{{ rs.opposite_property_no }}</span>
+                </div>
+                <div class="flex justify-between border-b pb-1">
+                    <span class="text-gray-500 font-medium">Submitted:</span>
+                    <span class="text-gray-700">{{ rs.submission_date }}</span>
+                </div>
+            </div>
+
+            <!-- Reporter Info -->
+            <div class="pt-2 border-t border-gray-200">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Reporter</p>
+                        <p class="text-sm font-medium text-gray-700">{{ rs.reporter|default:"Unknown" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google Maps Link -->
+            {% if rs.google_maps_link %}
+            <div class="pt-2">
+                <a href="{{ rs.google_maps_link }}" target="_blank"
+                    class="text-blue-600 text-sm hover:underline flex items-center">
+                    <svg class="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor"
+                        stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243a8 8 0 0011.314-11.314l-4.243 4.243z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    View on Google Maps
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+    {% endfor %}
+</section>

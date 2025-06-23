@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Consolidated Road and Property Information</h1>
+        <p class="text-gray-600">Comprehensive overview of infrastructure and property data by administrative division</p>
+    </div>
+    
+    <!-- Filters -->
+    <div class="mb-8 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">Filter Data</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Ward</label>
+                <select id="ward-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Wards</option>
+                    {% for ward in wards %}
+                        <option value="{{ ward }}">{{ ward }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Cell</label>
+                <select id="cell-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Cells</option>
+                    {% for cell in cells %}
+                        <option value="{{ cell }}">{{ cell }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex space-x-2">
+                <button id="apply-filters" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    Apply Filters
+                </button>
+                <button id="reset-filters" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-blue-50 text-blue-600 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Roads</p>
+                    <p class="text-2xl font-bold text-gray-800">{{ combined_data|length }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-green-50 text-green-600 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Properties</p>
+                    <p class="text-2xl font-bold text-gray-800">
+                        {{ combined_data|sum_attribute:"property_metrics.total_properties"|default:0 }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-purple-50 text-purple-600 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20H7a2 2 0 01-2-2V6a2 2 0 012-2h6a2 2 0 012 2v1m4 12h2a2 2 0 002-2v-6a2 2 0 00-2-2h-2.764a2 2 0 01-1.789-1.106l-.534-1.068A2 2 0 0010.764 4H8a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Road Length</p>
+                    <p class="text-2xl font-bold text-gray-800">
+                        {{ combined_data|sum_attribute:"road_metrics.total_length"|default:0|floatformat:2 }} km
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Reports -->
+    {% for data in combined_data %}
+    <div class="mb-8 p-6 bg-white rounded-xl shadow-sm border border-gray-100 ward-section" data-ward="{{ data.ward }}" data-cell="{{ data.cell }}">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">{{ data.division }}</h2>
+                <div class="flex items-center mt-1 text-sm text-gray-500">
+                    <span class="inline-block px-2 py-1 bg-blue-50 text-blue-600 rounded-full mr-2">Ward: {{ data.ward }}</span>
+                    <span class="inline-block px-2 py-1 bg-green-50 text-green-600 rounded-full">Cell: {{ data.cell }}</span>
+                </div>
+            </div>
+            <div class="mt-3 md:mt-0">
+                <span class="text-sm font-medium px-3 py-1 rounded-full bg-gray-100 text-gray-600">
+                    {{ data.road_metrics.total_roads }} Roads • 
+                    {{ data.property_metrics.total_properties|default:0 }} Properties
+                </span>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Road Metrics -->
+            <div>
+                <div class="flex items-center mb-4">
+                    <div class="w-1 h-6 bg-blue-500 rounded-full mr-2"></div>
+                    <h3 class="text-lg font-semibold text-gray-700">Road Infrastructure</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-600">Tarmacked Roads</span>
+                            <span class="text-sm font-medium text-gray-800">
+                                {{ data.road_metrics.tarmacked }} 
+                                ({{ data.road_metrics.tarmacked|div:data.road_metrics.total_roads|multiply:100|floatformat:1 }}%)
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-500 h-2 rounded-full" 
+                                 style="width: {{ data.road_metrics.tarmacked|div:data.road_metrics.total_roads|multiply:100 }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-600">Partially Tarmacked</span>
+                            <span class="text-sm font-medium text-gray-800">
+                                {{ data.road_metrics.partially_tarmacked }} 
+                                ({{ data.road_metrics.partially_tarmacked|div:data.road_metrics.total_roads|multiply:100|floatformat:1 }}%)
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-400 h-2 rounded-full" 
+                                 style="width: {{ data.road_metrics.partially_tarmacked|div:data.road_metrics.total_roads|multiply:100 }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-600">Gravel Roads</span>
+                            <span class="text-sm font-medium text-gray-800">
+                                {{ data.road_metrics.gravel_passable|add:data.road_metrics.gravel_ditches }} 
+                                ({{ data.road_metrics.gravel_passable|add:data.road_metrics.gravel_ditches|div:data.road_metrics.total_roads|multiply:100|floatformat:1 }}%)
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-yellow-500 h-2 rounded-full" 
+                                 style="width: {{ data.road_metrics.gravel_passable|add:data.road_metrics.gravel_ditches|div:data.road_metrics.total_roads|multiply:100 }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-500">Total Length</p>
+                            <p class="font-semibold text-gray-800">{{ data.road_metrics.total_length|default:"0" }} km</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-500">Fully Lit</p>
+                            <p class="font-semibold text-gray-800">
+                                {{ data.road_metrics.lit }} ({{ data.road_metrics.lit|div:data.road_metrics.total_roads|multiply:100|floatformat:1 }}%)
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-500">Dual Drainage</p>
+                            <p class="font-semibold text-gray-800">
+                                {{ data.road_metrics.dual_drainage }} ({{ data.road_metrics.dual_drainage|div:data.road_metrics.total_roads|multiply:100|floatformat:1 }}%)
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-500">Unlit Roads</p>
+                            <p class="font-semibold text-gray-800">
+                                {{ data.road_metrics.unlit }} ({{ data.road_metrics.unlit|div:data.road_metrics.total_roads|multiply:100|floatformat:1 }}%)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Property Metrics -->
+            <div>
+                <div class="flex items-center mb-4">
+                    <div class="w-1 h-6 bg-green-500 rounded-full mr-2"></div>
+                    <h3 class="text-lg font-semibold text-gray-700">Property Information</h3>
+                </div>
+                
+                {% if data.property_metrics %}
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-600">Installed Plates</span>
+                            <span class="text-sm font-medium text-gray-800">
+                                {{ data.property_metrics.installed_plates }} 
+                                ({{ data.property_metrics.installed_plates|div:data.property_metrics.total_properties|multiply:100|floatformat:1 }}%)
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" 
+                                 style="width: {{ data.property_metrics.installed_plates|div:data.property_metrics.total_properties|multiply:100 }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-600">Reserved Plates</span>
+                            <span class="text-sm font-medium text-gray-800">
+                                {{ data.property_metrics.reserved_plates }} 
+                                ({{ data.property_metrics.reserved_plates|div:data.property_metrics.total_properties|multiply:100|floatformat:1 }}%)
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-400 h-2 rounded-full" 
+                                 style="width: {{ data.property_metrics.reserved_plates|div:data.property_metrics.total_properties|multiply:100 }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-600">Modern Developments</span>
+                            <span class="text-sm font-medium text-gray-800">
+                                {{ data.property_metrics.modern_developments }} 
+                                ({{ data.property_metrics.modern_developments|div:data.property_metrics.total_properties|multiply:100|floatformat:1 }}%)
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-teal-500 h-2 rounded-full" 
+                                 style="width: {{ data.property_metrics.modern_developments|div:data.property_metrics.total_properties|multiply:100 }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-500">Total Properties</p>
+                            <p class="font-semibold text-gray-800">{{ data.property_metrics.total_properties }}</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-500">Allocated Plates</p>
+                            <p class="font-semibold text-gray-800">
+                                {{ data.property_metrics.allocated_plates }} ({{ data.property_metrics.allocated_plates|div:data.property_metrics.total_properties|multiply:100|floatformat:1 }}%)
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-500">Under Construction</p>
+                            <p class="font-semibold text-gray-800">
+                                {{ data.property_metrics.construction_developments }} ({{ data.property_metrics.construction_developments|div:data.property_metrics.total_properties|multiply:100|floatformat:1 }}%)
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-500">Vacant Properties</p>
+                            <p class="font-semibold text-gray-800">
+                                {{ data.property_metrics.vacant_developments }} ({{ data.property_metrics.vacant_developments|div:data.property_metrics.total_properties|multiply:100|floatformat:1 }}%)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="bg-gray-50 p-6 rounded-lg text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="mt-2 text-gray-500">No property data available for this area</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- JavaScript for filtering -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const wardFilter = document.getElementById('ward-filter');
+    const cellFilter = document.getElementById('cell-filter');
+    const applyBtn = document.getElementById('apply-filters');
+    const resetBtn = document.getElementById('reset-filters');
+    
+    applyBtn.addEventListener('click', function() {
+        const selectedWard = wardFilter.value;
+        const selectedCell = cellFilter.value;
+        
+        document.querySelectorAll('.ward-section').forEach(section => {
+            const sectionWard = section.dataset.ward;
+            const sectionCell = section.dataset.cell;
+            
+            const wardMatch = !selectedWard || sectionWard === selectedWard;
+            const cellMatch = !selectedCell || sectionCell === selectedCell;
+            
+            section.style.display = (wardMatch && cellMatch) ? 'block' : 'none';
+        });
+    });
+    
+    resetBtn.addEventListener('click', function() {
+        wardFilter.value = '';
+        cellFilter.value = '';
+        document.querySelectorAll('.ward-section').forEach(section => {
+            section.style.display = 'block';
+        });
+    });
+});
+</script>
+{% endblock %}

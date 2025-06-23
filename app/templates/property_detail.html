@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <!-- Header Section -->
+        <div class="px-6 py-5 bg-gradient-to-r from-green-600 to-green-800 flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold text-white">
+                    Property: {{ property.property_no|default:"Unnamed" }}
+                </h2>
+                <p class="mt-1 text-green-100">
+                    {{ property.street.street_road_name|default:"No street assigned" }}
+                </p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="{% url 'property_update' property.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-green-800 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    Edit Property
+                </a>
+                <a href="{% url 'property_list' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    Back to List
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="border-t border-gray-200 px-6 py-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Left Column -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                        Basic Information
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Property Number</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ property.property_no|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Property Type</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ property.get_property_usage_display|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Development Type</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ property.get_development_type_display|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Fencing Type</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ property.get_fencing_gate_type_display|default:"-" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                        Location Details
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Coordinates</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ property.coordinates|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Road Reserve Minimum</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ property.road_reserve_minimum|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Number of Units</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ property.no_units_on_property|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Number of Occupants</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ property.no_users_occupants|default:"-" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owner Information -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Owner Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-sm text-gray-500">Owner Name</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ property.owner_name|default:"-" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Owner Phone Number</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ property.owner_phone_no|default:"-" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Section (Placeholder) -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Location Map</h3>
+                <div class="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
+                    <p class="text-gray-500">Map visualization would appear here</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

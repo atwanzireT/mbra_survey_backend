@@ -42,17 +42,127 @@
 </div>
 
 <script>
-    // Optional: Add dynamic ward/cell filtering based on division selection
-    document.addEventListener('DOMContentLoaded', function() {
-        const divisionSelect = document.getElementById('id_division');
-        const wardSelect = document.getElementById('id_ward');
+// Define the mapping of divisions to wards and wards to cells
+const divisionWardMap = {
+    'South_Division': [
+        'Kakoba Ward', 'Nyamityobora Ward', 'Katete Ward', 
+        'Ruti Ward', 'Bugashe Ward', 'Katojo Ward'
+    ],
+    'North_Division': [
+        'Rwenjeru Ward', 'Nyabuhama Ward', 'Biharwe East Ward',
+        'Biharwe West Ward', 'Kishasha Ward', 'Kamukuzi Ward',
+        'Ruharo Ward', 'Kakiika Ward', 'Rwemigina Ward'
+    ]
+};
+
+const wardCellMap = {
+    // Kakoba Ward cells
+    'Kakoba Ward': ['Kakoba Central', 'Kakoba Quarters', 'Kihindi', 'Kisenyi A', 'Kishwahili', 'Kyapotani', 'Lugazi', 'N.T.C', 'Nyakaizi', 'Police/Prisons', 'Rwentondo', 'Mandela'],
+    
+    // Nyamityobora Ward cells
+    'Nyamityobora Ward': ['Agip', 'Central', 'Kabateraine', 'Kilembe', 'Lower', 'Lubiri', 'Market', 'Muti', 'Survey', 'Upper'],
+    
+    // Katete Ward cells
+    'Katete Ward': ['Bihunya', 'Karugangama', 'Katete Central', 'Kitebero', 'Nsikye', 'Nyamitanga', 'Rwemirinzi', 'Rwizi'],
+    
+    // Ruti Ward cells
+    'Ruti Ward': ['Kafunda', 'Kateera', 'Kirehe', 'Market', 'Nsikye', 'Nyamitanga', 'Rwizi', 'Tankhill'],
+    
+    // Bugashe Ward cells
+    'Bugashe Ward': ['Bugashe', 'Kanyamurimi', 'Kibaya I', 'Kibaya II', 'Kibona', 'Nyakahanga', 'Rutooma'],
+    
+    // Katojo Ward cells
+    'Katojo Ward': ['Karugyembe', 'Kitojo', 'Kibingo', 'Kitagata', 'Kitooma', 'Ngaara', 'Nyakashambya', 'Rwariire I', 'Rwariire II', 'Rwemigina', 'Rwentondo'],
+    
+    // Rwenjeru Ward cells
+    'Rwenjeru Ward': ['Rwendama', 'Rwenjeru South', 'Kamatarisi', 'Kabucebebe', 'Rwakaterere', 'Rwenjeru North', 'Katengyeto', 'Katerananga', 'Akaku/Rwenjeru Wd'],
+    
+    // Nyabuhama Ward cells
+    'Nyabuhama Ward': ['Ekigando', 'Nyaruhanga', 'Katojo', 'Rugarama', 'Kakukuru', 'Rwebishekye'],
+    
+    // Biharwe East Ward cells
+    'Biharwe East Ward': ['Kyanyarukondo 1', 'Rwemirabyo', 'Rwenkanja', 'Kasharara'],
+    
+    // Biharwe West Ward cells
+    'Biharwe West Ward': ['Biharwe East', 'Biharwe Central 11', 'Kyanyarukondo 11', 'Ekihangire', 'Mailo', 'Biharwe West', 'Biharwe Central 1', 'Kanyara'],
+    
+    // Kishasha Ward cells
+    'Kishasha Ward': ['Kyempitsi', 'Kinyaza', 'Nyakanengo', 'Rwabukwire', 'Rwobuyenje North', 'Kibungo', 'Rwobuyenje West', 'Nyamabare'],
+    
+    // Kamukuzi Ward cells
+    'Kamukuzi Ward': ['Biafra Cell', 'Boma Cell', 'Kakiika Cell', 'Kakyeka Cell', 'Kamukuzi Cell', 'Kashanyarazi Cell', 'Medical Cell', 'Ntare Cell', 'Rwebikoona Cell'],
+    
+    // Ruharo Ward cells
+    'Ruharo Ward': ['Kiyanja Cell', 'Mbaguta Cell', 'Mbarara High School', 'Nkokonjeru Cell', 'Rwizi Cell'],
+    
+    // Kakiika Ward cells
+    'Kakiika Ward': ['Makenke Cell', 'Nyakabungo Cell', 'Nyakiziba Cell', 'Butagatsi Cell', 'Kacence East Cell', 'Kacence West Cell', 'Rwobuyenje Cell'],
+    
+    // Rwemigina Ward cells
+    'Rwemigina Ward': ['Rwemigina Central Cell', 'Kabingo Cell', 'Rwebiihuro Cell', 'Buremba I Cell', 'Buremba II Cell', 'Kenkombe Cell']
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    const divisionSelect = document.getElementById('id_division');
+    const wardSelect = document.getElementById('id_ward');
+    const cellSelect = document.getElementById('id_cell');
+    
+    // Function to update wards based on division selection
+    function updateWards() {
+        const selectedDivision = divisionSelect.value;
         
-        if (divisionSelect && wardSelect) {
-            divisionSelect.addEventListener('change', function() {
-                // You would typically fetch wards for the selected division via AJAX
-                // This is just a placeholder for that functionality
-                console.log('Division changed to:', this.value);
+        // Clear current options
+        wardSelect.innerHTML = '<option value="">---------</option>';
+        
+        if (selectedDivision && divisionWardMap[selectedDivision]) {
+            // Add new options
+            divisionWardMap[selectedDivision].forEach(ward => {
+                const option = document.createElement('option');
+                option.value = ward;
+                option.textContent = ward;
+                wardSelect.appendChild(option);
             });
         }
-    });
+        
+        // Trigger cell update since ward changed
+        updateCells();
+    }
+    
+    // Function to update cells based on ward selection
+    function updateCells() {
+        const selectedWard = wardSelect.value;
+        
+        // Clear current options
+        cellSelect.innerHTML = '<option value="">---------</option>';
+        
+        if (selectedWard && wardCellMap[selectedWard]) {
+            // Add new options
+            wardCellMap[selectedWard].forEach(cell => {
+                const option = document.createElement('option');
+                option.value = cell;
+                option.textContent = cell;
+                cellSelect.appendChild(option);
+            });
+        }
+    }
+    
+    // Add event listeners
+    if (divisionSelect) {
+        divisionSelect.addEventListener('change', updateWards);
+        
+        // Initialize wards if division is already selected
+        if (divisionSelect.value) {
+            updateWards();
+        }
+    }
+    
+    if (wardSelect) {
+        wardSelect.addEventListener('change', updateCells);
+        
+        // Initialize cells if ward is already selected
+        if (wardSelect.value) {
+            updateCells();
+        }
+    }
+});
 </script>

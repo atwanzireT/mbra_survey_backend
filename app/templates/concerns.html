@@ -1,23 +1,26 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
 <!-- Section Title -->
 <div class="mt-8 mx-5 mb-4">
-    <h2 class="text-2xl font-bold text-gray-800">Development Concerns</h2>
-    <p class="text-gray-600">Building and construction reports from various divisions</p>
+    <h2 class="text-xl font-bold text-gray-800">Development Concerns</h2>
+    <p class="text-gray-600 text-sm">Building and construction reports from various divisions</p>
 </div>
 
 <!-- Concerns Grid -->
 <section class="m-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     {% for rs in concerns %}
     <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-        
+
         <!-- Image Section -->
         <div class="aspect-w-16 aspect-h-12 bg-gray-200">
             {% if rs.structure_photo %}
-                <img src="{{ rs.structure_photo.url }}" alt="Structure Photo"
-                    class="w-full h-48 object-cover">
+            <img src="{{ rs.structure_photo.url }}" alt="Structure Photo" class="w-full h-48 object-cover">
             {% else %}
-                <div class="w-full h-48 flex items-center justify-center text-gray-400 text-sm">
-                    No Image Available
-                </div>
+            <div class="w-full h-48 flex items-center justify-center text-gray-400 text-sm">
+                No Image Available
+            </div>
             {% endif %}
         </div>
 
@@ -74,8 +77,8 @@
             <div class="pt-2">
                 <a href="{{ rs.google_maps_link }}" target="_blank"
                     class="text-blue-600 text-sm hover:underline flex items-center">
-                    <svg class="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor"
-                        stroke-width="2" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243a8 8 0 0011.314-11.314l-4.243 4.243z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -89,3 +92,5 @@
     </div>
     {% endfor %}
 </section>
+
+{% endblock content %}

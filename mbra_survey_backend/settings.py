@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     
     # Apps
     'app',
+    'accounts',
+
+    # Third Parties
     'rest_framework',
 ]
 
@@ -65,7 +68,9 @@ ROOT_URLCONF = 'mbra_survey_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR, "templates"
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -145,7 +150,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 # Email settings
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')

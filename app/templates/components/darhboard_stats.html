@@ -1,0 +1,258 @@
+<!-- Statistics Section -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 m-5">
+    <!-- Concerns Card -->
+    <div class="bg-white rounded-xl shadow p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-xl font-semibold text-gray-600">Total Concerns</h2>
+                <p class="text-3xl font-bold text-blue-600 mt-2">{{ total_concerns }}</p>
+            </div>
+            <div class="bg-blue-100 p-3 rounded-full">
+                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-500 flex items-center">
+            <span class="text-green-500 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                </svg>
+                {{ recent_concerns }} this month
+            </span>
+        </div>
+    </div>
+
+    <!-- Streets Card -->
+    <div class="bg-white rounded-xl shadow p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-xl font-semibold text-gray-600">Total Streets</h2>
+                <p class="text-3xl font-bold text-purple-600 mt-2">{{ total_streets }}</p>
+            </div>
+            <div class="bg-purple-100 p-3 rounded-full">
+                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="text-sm text-gray-500">By condition:</div>
+            <div class="flex flex-wrap gap-1 mt-1">
+                {% for condition in streets_per_condition|slice:":3" %}
+                <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                    {{ condition.road_surface_condition }}: {{ condition.count }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Properties Card -->
+    <div class="bg-white rounded-xl shadow p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-xl font-semibold text-gray-600">Total Properties</h2>
+                <p class="text-3xl font-bold text-green-600 mt-2">{{ total_properties }}</p>
+            </div>
+            <div class="bg-green-100 p-3 rounded-full">
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="text-sm text-gray-500">{{ total_properties_with_plates }} with plates</div>
+            <div class="flex flex-wrap gap-1 mt-1">
+                {% for type in properties_by_type|slice:":2" %}
+                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                    {{ type.property_usage }}: {{ type.count }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Concerns by Division Card -->
+    <div class="bg-white rounded-xl shadow p-6 hover:shadow-lg transition-shadow">
+        <h2 class="text-xl font-semibold text-gray-600">Concerns by Division</h2>
+        <div class="mt-4 space-y-2">
+            {% for division in concerns_per_division|slice:":3" %}
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span>{{ division.division }}</span>
+                    <span class="font-medium">{{ division.count }}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" 
+                         style="width: {% widthratio division.count total_concerns 100 %}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 m-5">
+    <!-- Concerns Trend Chart -->
+    <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-xl font-semibold mb-4">Concerns Trend</h2>
+        <div class="h-64">
+            <canvas id="concernsTrendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Property Types Chart -->
+    <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-xl font-semibold mb-4">Property Types Distribution</h2>
+        <div class="h-64">
+            <canvas id="propertyTypesChart"></canvas>
+        </div>
+    </div>
+</div>
+
+
+<!-- Recent Activity Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 m-5">
+    <!-- Recent Streets Added -->
+    <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-xl font-semibold mb-4">Recently Added Streets</h2>
+        <div class="space-y-4">
+            {% for street in recent_streets %}
+            <div class="flex items-start">
+                <div class="bg-blue-100 p-2 rounded-lg mr-4">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-medium">{{ street.street_road_name }}</h3>
+                    <p class="text-sm text-gray-500">{{ street.village }}, {{ street.ward }}</p>
+                    <p class="text-xs text-gray-400 mt-1">Added on {{ street.data_entry_date_update|date:"M d, Y" }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500">No recent streets found</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Properties Added -->
+    <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-xl font-semibold mb-4">Recently Added Properties</h2>
+        <div class="space-y-4">
+            {% for property in recent_properties %}
+            <div class="flex items-start">
+                <div class="bg-green-100 p-2 rounded-lg mr-4">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-medium">{{ property.property_no }}</h3>
+                    <p class="text-sm text-gray-500">{{ property.get_property_usage_display }}</p>
+                    <p class="text-xs text-gray-400 mt-1">Owner: {{ property.owner_name|default:"Unknown" }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500">No recent properties found</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+<!-- Chart.js Implementation -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Concerns Trend Chart (Line Chart)
+    const concernsTrendCtx = document.getElementById('concernsTrendChart').getContext('2d');
+    const concernsTrendChart = new Chart(concernsTrendCtx, {
+        type: 'line',
+        data: {
+            labels: [
+                {% for month in concerns_trend %}
+                    "{{ month.month|date:'M Y' }}",
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Number of Concerns',
+                data: [
+                    {% for month in concerns_trend %}
+                        {{ month.count }},
+                    {% endfor %}
+                ],
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderColor: 'rgba(59, 130, 246, 0.8)',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+    // Property Types Chart (Doughnut Chart)
+    const propertyTypesCtx = document.getElementById('propertyTypesChart').getContext('2d');
+    const propertyTypesChart = new Chart(propertyTypesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                {% for type in properties_by_type %}
+                    "{{ type.property_usage }}",
+                {% endfor %}
+            ],
+            datasets: [{
+                data: [
+                    {% for type in properties_by_type %}
+                        {{ type.count }},
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    '#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6',
+                    '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#F43F5E'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+</script>

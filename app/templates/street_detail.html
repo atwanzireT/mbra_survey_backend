@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <!-- Header Section -->
+        <div class="px-6 py-5 bg-gradient-to-r from-green-600 to-green-800 flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold text-white">
+                    {{ street.street_road_name|default:"Unnamed Street/Road" }}
+                </h2>
+                <p class="mt-1 text-blue-100">
+                    {{ street.village|default:"No village specified" }} • {{ street.ward|default:"No ward specified" }}
+                </p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="{% url 'street_update' street.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-green-800 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    Edit Street
+                </a>
+                <a href="{% url 'street_list' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    Back to List
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="border-t border-gray-200 px-6 py-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Left Column -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                        Basic Information
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Street/Road Name</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ street.street_road_name|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Village</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ street.village|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Ward</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ street.ward|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Cell</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ street.cell|default:"-" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                        Infrastructure Details
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Road Surface Condition</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ street.get_road_surface_condition_display|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Drainage System</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ street.get_drainage_system_display|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Street Lighting</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ street.street_lighting_status|default:"-" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Service Lane</p>
+                            <p class="mt-1 text-sm text-gray-900">
+                                {% if street.service_lane_existence %}Yes{% else %}No{% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Information -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Location Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-sm text-gray-500">Starting Point</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ street.starting_point|default:"-" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Ending Point</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ street.ending_point|default:"-" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Starting Coordinates</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ street.starting_coordinates|default:"-" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Ending Coordinates</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ street.ending_coordinates|default:"-" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Council Information -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Council Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-sm text-gray-500">Area Councilor</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ street.area_councilor_name|default:"-" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Councilor Phone</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ street.area_councilor_phone_no|default:"-" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            {% if street.notes %}
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Additional Notes</h3>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-700">{{ street.notes }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Properties on this Street (Optional) -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Properties on this Street</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property No</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for property in street.propertyinformation_set.all %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {{ property.property_no|default:"-" }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ property.get_property_usage_display|default:"-" }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ property.owner_name|default:"-" }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="{% url 'property_detail' property.pk %}" class="text-blue-600 hover:text-blue-900">View</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    No properties found on this street
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

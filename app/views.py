@@ -243,7 +243,6 @@ def report_summary(request):
         .order_by('division', 'ward', 'cell')
     )
 
-
     # Property data aggregation
     property_data = (
         PropertyInformation.objects
@@ -279,10 +278,14 @@ def report_summary(request):
         }
         combined_data.append(combined)
 
+    # Handle None values when sorting
+    wards = sorted({item['ward'] for item in road_data if item['ward'] is not None})
+    cells = sorted({item['cell'] for item in road_data if item['cell'] is not None})
+
     context = {
         'combined_data': combined_data,
-        'wards': sorted(set(item['ward'] for item in road_data)),
-        'cells': sorted(set(item['cell'] for item in road_data)),
+        'wards': wards,
+        'cells': cells,
     }
     
     return render(request, 'reports.html', context)

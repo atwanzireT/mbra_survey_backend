@@ -9,6 +9,8 @@ from django.db.models.functions import TruncMonth
 from datetime import datetime, timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.db.models.functions import Cast
+from django.core.paginator import Paginator
 
 
 @login_required
@@ -72,7 +74,7 @@ def street_road_create(request):
         form = StreetRoadInformationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('success_url') 
+            return redirect('street_create') 
     else:
         form = StreetRoadInformationForm()
     
@@ -96,26 +98,69 @@ def street_road_update(request, pk):
     
     return render(request, 'street_form.html', {'form': form, 'street': street})
 
+
 @login_required
 def street_road_list(request):
-    query = request.GET.get('q')
+    # Get all filter parameters
+    query = request.GET.get('q', '')
+    ward = request.GET.get('ward', '')
+    cell = request.GET.get('cell', '')
+    road_condition = request.GET.get('road_condition', '')
+    drainage = request.GET.get('drainage', '')
+    lighting = request.GET.get('lighting', '')
+    
+    # Start with all streets
     streets = StreetRoadInformation.objects.all()
     
+    # Apply filters
     if query:
         streets = streets.filter(
             Q(street_road_name__icontains=query) |
-            Q(village__icontains=query) |
+            Q(division__icontains=query) |
             Q(ward__icontains=query) |
             Q(cell__icontains=query) |
             Q(area_councilor_name__icontains=query)
         )
     
+    if ward:
+        streets = streets.filter(ward=ward)
+    
+    if cell:
+        streets = streets.filter(cell=cell)
+    
+    if road_condition:
+        streets = streets.filter(road_surface_condition=road_condition)
+    
+    if drainage:
+        streets = streets.filter(drainage_system=drainage)
+    
+    if lighting:
+        streets = streets.filter(street_lighting_status=lighting)
+    
+    # Get unique values for dropdowns
+    wards = StreetRoadInformation.objects.values_list('ward', flat=True).distinct().order_by('ward')
+    cells = StreetRoadInformation.objects.values_list('cell', flat=True).distinct().order_by('cell')
+    
+    # Pagination
+    paginator = Paginator(streets, 25)  # Show 25 streets per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     context = {
-        'streets': streets,
-        'search_query': query
+        'streets': page_obj,
+        'search_query': query,
+        'selected_ward': ward,
+        'selected_cell': cell,
+        'selected_road_condition': road_condition,
+        'selected_drainage': drainage,
+        'selected_lighting': lighting,
+        'wards': wards,
+        'cells': cells,
+        'road_conditions': StreetRoadInformation.ROAD_SURFACE_CONDITION,
+        'drainage_systems': StreetRoadInformation.DRAINAGE_SYSTEM_CHOICES,
+        'lighting_statuses': StreetRoadInformation.STREET_LIGHTING_STATUS_CHOICES,
     }
     return render(request, 'street_list.html', context)
-
 
 @login_required
 def property_create(request):
@@ -123,7 +168,7 @@ def property_create(request):
         form = PropertyInformationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('property_list')  # Redirect to property list view
+            return redirect('property_create')  # Redirect to property list view
     else:
         form = PropertyInformationForm()
     
@@ -178,9 +223,9 @@ def report_summary(request):
         .values('division', 'ward', 'cell')
         .annotate(
             total_roads=Count('id'),
-            total_length=Sum(ExpressionWrapper(
-                F('street_road_distance'), output_field=FloatField()
-            )),
+            total_length=Sum(
+                Cast('street_road_distance', output_field=FloatField())
+            ),
             tarmacked=Count('id', filter=Q(road_surface_condition='tarmacked')),
             partially_tarmacked=Count('id', filter=Q(road_surface_condition='partially_tarmacked')),
             potpoled=Count('id', filter=Q(road_surface_condition='tarmacked_potpoled')),
@@ -197,6 +242,7 @@ def report_summary(request):
         )
         .order_by('division', 'ward', 'cell')
     )
+
 
     # Property data aggregation
     property_data = (

@@ -131,6 +131,7 @@ class PropertyInformation(models.Model):
     ]
 
     FENCING_TYPE_CHOICES = [
+        ('wall_with_gate', 'Wall with gate'),
         ('wall_no_gate', 'Wall with no gate'),
         ('hedge_with_gate', 'Hedge with Gate'),
         ('hedge_no_gate', 'Hedge with no gate'),

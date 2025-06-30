@@ -2,6 +2,7 @@ from django.db import models
 from .data import CELL_CHOICES, DIVISION_CHOICES, WARD_CHOICES
 from phonenumber_field.modelfields import PhoneNumberField 
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 
 class Concern(models.Model):
     reporter = models.CharField(max_length=50, blank=True, null=True)
@@ -165,8 +166,8 @@ class PropertyInformation(models.Model):
     
     # Enhanced location fields
     property_location = models.CharField(max_length=255, blank=True, null=True, help_text="Human-readable address")
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
     
     # Property usage details
     no_units_on_property = models.PositiveIntegerField(blank=True, null=True)
@@ -181,6 +182,43 @@ class PropertyInformation(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     verified = models.BooleanField(default=False)
+    
+    def get_google_maps_url(self):
+        """Generate Google Maps URL from coordinates"""
+        if self.latitude and self.longitude:
+            return f"https://www.google.com/maps?q={self.latitude},{self.longitude}"
+        return None
+    
+    def get_google_maps_embed_url(self):
+        """Generate Google Maps embed URL for iframes"""
+        if self.latitude and self.longitude:
+            return f"https://maps.google.com/maps?q={self.latitude},{self.longitude}&z=15&output=embed"
+        return None
+    
+    def get_google_maps_link(self):
+        """Generate HTML link to Google Maps"""
+        url = self.get_google_maps_url()
+        if url:
+            return mark_safe(f'<a href="{url}" target="_blank">View on Google Maps</a>')
+        return "No location data"
+    
+    def get_google_maps_embed(self):
+        """Generate HTML embed for Google Maps"""
+        url = self.get_google_maps_embed_url()
+        if url:
+            return mark_safe(
+                f'<iframe width="100%" height="300" frameborder="0" style="border:0" '
+                f'src="{url}" allowfullscreen></iframe>'
+            )
+        return "No location data available for embedding"
+    
+    def save(self, *args, **kwargs):
+        """Auto-update property_location if we have coordinates but no address"""
+        if self.latitude and self.longitude and not self.property_location:
+            # You could add reverse geocoding here using Google Maps API
+            # For now, we'll just set a basic location string
+            self.property_location = f"Lat: {self.latitude}, Long: {self.longitude}"
+        super().save(*args, **kwargs)
     
     class Meta:
         indexes = [

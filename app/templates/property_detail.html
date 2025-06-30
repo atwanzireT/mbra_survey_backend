@@ -1,110 +1,235 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-        <!-- Header Section -->
-        <div class="px-6 py-5 bg-gradient-to-r from-green-600 to-green-800 flex justify-between items-center">
-            <div>
-                <h2 class="text-2xl font-bold text-white">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Property Header -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+        <div class="px-6 py-5 bg-gradient-to-r from-green-600 to-green-800 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div class="mb-4 sm:mb-0">
+                <h1 class="text-2xl font-bold text-green-800">
                     Property: {{ property.property_no|default:"Unnamed" }}
-                </h2>
-                <p class="mt-1 text-green-100">
+                </h1>
+                <p class="mt-1 text-green-500">
                     {{ property.street.street_road_name|default:"No street assigned" }}
                 </p>
             </div>
-            <div class="flex space-x-3">
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                 <a href="{% url 'property_update' property.pk %}"
-                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-green-800 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    class="inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-green-800 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                     Edit Property
                 </a>
                 <a href="{% url 'property_list' %}"
-                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    class="inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                     Back to List
                 </a>
             </div>
         </div>
+    </div>
 
-        <!-- Main Content -->
-        <div class="border-t border-gray-200 px-6 py-5">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Left Column -->
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                        Basic Information
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column - Property Details -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Property Information Card -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-lg font-medium text-green-900">
+                        Property Details
                     </h3>
-                    <div class="space-y-4">
+                </div>
+                <div class="px-6 py-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <p class="text-sm text-gray-500">Property Number</p>
-                            <p class="mt-1 text-sm text-gray-900">{{ property.property_no|default:"-" }}</p>
+                            <h4 class="text-sm font-medium text-gray-500 mb-2">Basic Information</h4>
+                            <dl class="space-y-3">
+                                <div>
+                                    <dt class="text-sm text-gray-500">Property Number</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ property.property_no|default:"-" }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm text-gray-500">Property Type</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ property.get_property_usage_display|default:"-" }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm text-gray-500">Development Type</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ property.get_development_type_display|default:"-" }}</dd>
+                                </div>
+                            </dl>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Property Type</p>
-                            <p class="mt-1 text-sm text-gray-900">{{ property.get_property_usage_display|default:"-" }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Development Type</p>
-                            <p class="mt-1 text-sm text-gray-900">{{ property.get_development_type_display|default:"-"
-                                }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Fencing Type</p>
-                            <p class="mt-1 text-sm text-gray-900">{{ property.get_fencing_gate_type_display|default:"-"
-                                }}</p>
+                            <h4 class="text-sm font-medium text-gray-500 mb-2">Characteristics</h4>
+                            <dl class="space-y-3">
+                                <div>
+                                    <dt class="text-sm text-gray-500">Fencing Type</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ property.get_fencing_gate_type_display|default:"-" }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm text-gray-500">Road Reserve</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ property.get_road_reserve_minimum_display|default:"-" }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm text-gray-500">Property Plate</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ property.get_property_number_plate_display|default:"-" }}</dd>
+                                </div>
+                            </dl>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Right Column -->
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-4 pb-2 border-b border-gray-200">
+            <!-- Owner Information Card -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-lg font-medium text-gray-900">
+                        Ownership Information
+                    </h3>
+                </div>
+                <div class="px-6 py-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <dl class="space-y-3">
+                                <div>
+                                    <dt class="text-sm text-gray-500">Owner Name</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ property.owner_name|default:"-" }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm text-gray-500">Contact Number</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {% if property.owner_phone_no %}
+                                            <a href="tel:{{ property.owner_phone_no }}" class="text-green-600 hover:text-green-800">{{ property.owner_phone_no }}</a>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                        <div>
+                            <dl class="space-y-3">
+                                <div>
+                                    <dt class="text-sm text-gray-500">Email Address</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {% if property.owner_email %}
+                                            <a href="mailto:{{ property.owner_email }}" class="text-green-600 hover:text-green-800">{{ property.owner_email }}</a>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm text-gray-500">Verification Status</dt>
+                                    <dd class="mt-1">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            {% if property.verified %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                            {% if property.verified %}Verified{% else %}Unverified{% endif %}
+                                        </span>
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Location Information -->
+        <div class="space-y-8">
+            <!-- Location Details Card -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-lg font-medium text-gray-900">
                         Location Details
                     </h3>
-                    <div class="space-y-4">
+                </div>
+                <div class="px-6 py-5">
+                    <dl class="space-y-4">
                         <div>
-                            <p class="text-sm text-gray-500">Coordinates</p>
-                            <p class="mt-1 text-sm text-gray-900">{{ property.coordinates|default:"-" }}</p>
+                            <dt class="text-sm text-gray-500">Street Address</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ property.street.street_road_name|default:"-" }}</dd>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Road Reserve Minimum</p>
-                            <p class="mt-1 text-sm text-gray-900">{{ property.road_reserve_minimum|default:"-" }}</p>
+                            <dt class="text-sm text-gray-500">Property Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ property.property_location|default:"-" }}</dd>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Number of Units</p>
-                            <p class="mt-1 text-sm text-gray-900">{{ property.no_units_on_property|default:"-" }}</p>
+                            <dt class="text-sm text-gray-500">Coordinates</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {% if property.latitude and property.longitude %}
+                                    {{ property.latitude }}, {{ property.longitude }}
+                                {% else %}
+                                    Not available
+                                {% endif %}
+                            </dd>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Number of Occupants</p>
-                            <p class="mt-1 text-sm text-gray-900">{{ property.no_users_occupants|default:"-" }}</p>
+                            <dt class="text-sm text-gray-500">Google Maps</dt>
+                            <dd class="mt-1">
+                                {% if property.latitude and property.longitude %}
+                                    <a href="https://www.google.com/maps?q={{ property.latitude }},{{ property.longitude }}" 
+                                       target="_blank" 
+                                       class="inline-flex items-center text-green-600 hover:text-green-800">
+                                        <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        View on Google Maps
+                                    </a>
+                                {% else %}
+                                    <span class="text-gray-500">No coordinates available</span>
+                                {% endif %}
+                            </dd>
                         </div>
-                    </div>
+                    </dl>
                 </div>
             </div>
 
-            <!-- Owner Information -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Owner Information</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <p class="text-sm text-gray-500">Owner Name</p>
-                        <p class="mt-1 text-sm text-gray-900">{{ property.owner_name|default:"-" }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Owner Phone Number</p>
-                        <p class="mt-1 text-sm text-gray-900">{{ property.owner_phone_no|default:"-" }}</p>
-                    </div>
+            <!-- Interactive Map Card -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-lg font-medium text-gray-900">
+                        Location Map
+                    </h3>
+                </div>
+                <div class="p-0">
+                    {% if property.latitude and property.longitude %}
+                        <div class="h-64 w-full">
+                            <iframe 
+                                width="100%" 
+                                height="100%" 
+                                frameborder="0" 
+                                style="border:0"
+                                src="https://maps.google.com/maps?q={{ property.latitude }},{{ property.longitude }}&z=15&output=embed"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    {% else %}
+                        <div class="p-6 text-center text-gray-500">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p class="mt-2">No location data available</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
-            <!-- Map Section -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Location Map</h3>
-                <div class="bg-gray-100 rounded-lg h-64 overflow-hidden">
-                    <iframe width="100%" height="100%" frameborder="0" style="border:0"
-                        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3989.753622315796!2d30.6526454!3d-0.596131!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1625090000000!5m2!1sen!2sus"
-                        allowfullscreen>
-                    </iframe>
+            <!-- Occupancy Card -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-lg font-medium text-gray-900">
+                        Occupancy Details
+                    </h3>
+                </div>
+                <div class="px-6 py-5">
+                    <dl class="space-y-4">
+                        <div>
+                            <dt class="text-sm text-gray-500">Number of Units</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ property.no_units_on_property|default:"-" }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm text-gray-500">Number of Occupants</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ property.no_users_occupants|default:"-" }}</dd>
+                        </div>
+                    </dl>
                 </div>
             </div>
         </div>

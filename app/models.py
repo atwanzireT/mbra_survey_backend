@@ -221,6 +221,7 @@ class PropertyInformation(models.Model):
         super().save(*args, **kwargs)
     
     class Meta:
+        ordering = ['property_no']
         indexes = [
             models.Index(fields=['property_no']),
             models.Index(fields=['street']),

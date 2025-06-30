@@ -51,6 +51,7 @@ INSTALLED_APPS = [
 
     # Third Parties
     'rest_framework',
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
@@ -94,7 +95,7 @@ WSGI_APPLICATION = 'mbra_survey_backend.wsgi.application'
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
-# }
+# }https://mbararacityinfrastructure.com/
 
 DATABASES = {
     'default': {

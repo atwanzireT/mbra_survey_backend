@@ -5,6 +5,11 @@ from .models import Concern
 from .serializers import ConcernSerializer
 import mimetypes
 import base64
+from rest_framework import viewsets, generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from .models import StreetRoadInformation, PropertyInformation
+from .serializers import *
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, To, Content, Attachment, FileContent, FileName, FileType, Disposition
 
@@ -70,3 +75,66 @@ class ConcernViewset(viewsets.ModelViewSet):
             print(response.status_code)
         except Exception as e:
             print(f"Error sending email via SendGrid: {e}")
+
+
+class StreetRoadInformationViewSet(viewsets.ModelViewSet):
+    queryset = StreetRoadInformation.objects.all()
+    serializer_class = StreetRoadInformationSerializer
+    permission_classes = [AllowAny]  # Changed from IsAuthenticated to AllowAny
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        street_name = self.request.query_params.get('street_name', None)
+        if street_name:
+            queryset = queryset.filter(street_road_name__icontains=street_name)
+        return queryset
+
+class PropertyInformationViewSet(viewsets.ModelViewSet):
+    queryset = PropertyInformation.objects.all()
+    serializer_class = PropertyInformationSerializer
+    permission_classes = [AllowAny]  # Changed from IsAuthenticated to AllowAny
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        property_no = self.request.query_params.get('property_no', None)
+        street_id = self.request.query_params.get('street_id', None)
+        
+        if property_no:
+            queryset = queryset.filter(property_no__icontains=property_no)
+        if street_id:
+            queryset = queryset.filter(street__id=street_id)
+        return queryset
+
+class StreetRoadPropertiesAPIView(generics.ListAPIView):
+    serializer_class = PropertyInformationSerializer
+    permission_classes = [AllowAny]  # Changed from IsAuthenticated to AllowAny
+
+    def get_queryset(self):
+        street_id = self.kwargs['street_id']
+        return PropertyInformation.objects.filter(street__id=street_id)
+
+class StreetRoadUpdateAPIView(generics.UpdateAPIView):
+    queryset = StreetRoadInformation.objects.all()
+    serializer_class = StreetRoadInformationSerializer
+    permission_classes = [AllowAny]  # Changed from IsAuthenticated to AllowAny
+    lookup_field = 'pk'
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+class PropertyInformationUpdateAPIView(generics.UpdateAPIView):
+    queryset = PropertyInformation.objects.all()
+    serializer_class = PropertyInformationSerializer
+    permission_classes = [AllowAny]  # Changed from IsAuthenticated to AllowAny
+    lookup_field = 'pk'
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)

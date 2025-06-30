@@ -1,17 +1,17 @@
-<div class="max-w-8/10 mx-auto py-8 px-4 sm:px-6 lg:px-8">
+<div class="max-w-4xl mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+        <div class="px-4 py-4 sm:px-6 bg-gray-50">
             <h3 class="text-lg leading-6 font-medium text-gray-900">
                 Street/Road Information Form
             </h3>
         </div>
         <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
-            <form method="post" class="p-6">
+            <form method="post" class="p-4 sm:p-6">
                 {% csrf_token %}
                 
-                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {% for field in form %}
-                    <div class="sm:col-span-{% if field.name == 'notes' %}6{% else %}2{% endif %}">
+                    <div class="{% if field.name == 'notes' %}col-span-1 md:col-span-2 lg:col-span-3{% else %}col-span-1{% endif %}">
                         <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
                             {{ field.label }}
                         </label>
@@ -28,11 +28,11 @@
                     {% endfor %}
                 </div>
 
-                <div class="mt-8 flex justify-end">
-                    <button type="button" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <div class="mt-6 sm:mt-8 flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-0">
+                    <button type="button" class="w-full sm:w-auto bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         Cancel
                     </button>
-                    <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button type="submit" class="w-full sm:w-auto inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         Save
                     </button>
                 </div>
@@ -122,6 +122,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 option.textContent = ward;
                 wardSelect.appendChild(option);
             });
+            
+            // If there's only one ward, select it automatically
+            if (divisionWardMap[selectedDivision].length === 1) {
+                wardSelect.value = divisionWardMap[selectedDivision][0];
+                updateCells();
+            }
         }
         
         // Trigger cell update since ward changed
@@ -143,6 +149,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 option.textContent = cell;
                 cellSelect.appendChild(option);
             });
+            
+            // If there's only one cell, select it automatically
+            if (wardCellMap[selectedWard].length === 1) {
+                cellSelect.value = wardCellMap[selectedWard][0];
+            }
         }
     }
     

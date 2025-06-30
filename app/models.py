@@ -1,5 +1,7 @@
 from django.db import models
 from .data import CELL_CHOICES, DIVISION_CHOICES, WARD_CHOICES
+from phonenumber_field.modelfields import PhoneNumberField 
+from django.utils import timezone
 
 class Concern(models.Model):
     reporter = models.CharField(max_length=50, blank=True, null=True)
@@ -105,10 +107,10 @@ class PropertyInformation(models.Model):
         ('condemned', 'Condemned'),
         ('under_construction', 'Under Construction'),
         ('vacant', 'Vacant'),
-        ('delapilated', 'Delapilated'),
+        ('delapidated', 'Delapidated'),
     )
 
-    PROPERTY_NO_PLATE =(
+    PROPERTY_NO_PLATE = (
         ('installed', 'Installed'),
         ('reserved', 'Reserved'),
         ('allocated', 'Allocated'),
@@ -149,18 +151,44 @@ class PropertyInformation(models.Model):
         ('partially_observed', 'Partially Observed'),
         ('not_observed', 'Not Observed')
     )
+
+    # Basic property information
     property_no = models.CharField(max_length=100, blank=True, null=True)
-    street = models.ForeignKey(StreetRoadInformation, on_delete=models.CASCADE)
+    street = models.ForeignKey('StreetRoadInformation', on_delete=models.CASCADE)
+    
+    # Property characteristics
     property_number_plate = models.CharField(max_length=100, blank=True, null=True, choices=PROPERTY_NO_PLATE)
     development_type = models.CharField(max_length=100, blank=True, null=True, choices=DEVELOPMENT_TYPE_CHOICES)
     fencing_gate_type = models.CharField(max_length=100, blank=True, null=True, choices=FENCING_TYPE_CHOICES)
     property_usage = models.CharField(max_length=100, blank=True, null=True, choices=PROPERTY_TYPE_CHOICES)
     road_reserve_minimum = models.CharField(max_length=50, blank=True, null=True, choices=ROAD_RESERVE_MINIMUM_CHOICES)
-    coordinates = models.CharField(max_length=255, blank=True, null=True)
+    
+    # Enhanced location fields
+    property_location = models.CharField(max_length=255, blank=True, null=True, help_text="Human-readable address")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    
+    # Property usage details
     no_units_on_property = models.PositiveIntegerField(blank=True, null=True)
     no_users_occupants = models.PositiveIntegerField(blank=True, null=True)
+    
+    # Ownership information
     owner_name = models.CharField(max_length=255, blank=True, null=True)
-    owner_phone_no = models.CharField(max_length=20, blank=True, null=True)
+    owner_phone_no = PhoneNumberField(blank=True, null=True)
+    owner_email = models.EmailField(blank=True, null=True)
+    
+    # Metadata
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    verified = models.BooleanField(default=False)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['property_no']),
+            models.Index(fields=['street']),
+            models.Index(fields=['property_usage']),
+        ]
+        verbose_name_plural = "Property Information"
 
     def __str__(self):
         return f"{self.property_no} - {self.street or 'Unnamed'}"

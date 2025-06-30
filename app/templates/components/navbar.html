@@ -1,3 +1,5 @@
+{% load static %}
+<!-- NavBar Component -->
 <nav class="bg-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
@@ -9,13 +11,15 @@
                         alt="Mbarara Council Logo">
                 </div>
                 <div class="hidden md:block">
-                    <a href="{% url 'index' %}" class="text-xl font-bold text-gray-800 hover:text-green-600">Mbarara City Council</a>
+                    <a href="{% url 'index' %}"
+                        class="text-xl font-bold text-gray-800 hover:text-green-600 transition-colors duration-200">Mbarara
+                        City Council</a>
                 </div>
             </div>
 
             <!-- Desktop Navigation Links -->
             <div class="hidden md:block">
-                <div class="ml-10 flex items-baseline space-x-8">
+                <div class="ml-10 flex items-baseline space-x-4 lg:space-x-8">
                     <a href="{% url 'index' %}"
                         class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Home</a>
                     <a href="{% url 'street_list' %}"
@@ -26,7 +30,6 @@
                         class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Concerns</a>
                     <a href="/reports/"
                         class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Reports</a>
-                   
                 </div>
             </div>
 
@@ -39,9 +42,10 @@
             </div>
 
             <!-- Mobile menu button -->
-            <div class="md:hidden">
+            <div class="md:hidden flex items-center">
                 <button type="button" id="mobile-menu-button"
-                    class="bg-white p-2 rounded-md text-gray-700 hover:text-green-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200">
+                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-green-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200"
+                    aria-expanded="false">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 12h16M4 18h16"></path>
@@ -66,9 +70,9 @@
                 class="text-gray-700 hover:text-green-600 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Concerns</a>
             <a href="/reports/"
                 class="text-gray-700 hover:text-green-600 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Reports</a>
-          
+
             <!-- Mobile CTA Button -->
-            <div class="px-3 py-2">
+            <div class="pt-2 pb-2">
                 <a href="/accounts/logout/"
                     class="w-full bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 shadow-md text-center block">
                     Logout

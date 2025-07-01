@@ -7,7 +7,7 @@ import mimetypes
 import base64
 from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import StreetRoadInformation, PropertyInformation
 from .serializers import *
 from sendgrid import SendGridAPIClient
@@ -80,7 +80,7 @@ class ConcernViewset(viewsets.ModelViewSet):
 class StreetRoadInformationViewSet(viewsets.ModelViewSet):
     queryset = StreetRoadInformation.objects.all()
     serializer_class = StreetRoadInformationSerializer
-    permission_classes = [AllowAny]  # Changed from IsAuthenticated to AllowAny
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -107,7 +107,7 @@ class PropertyInformationViewSet(viewsets.ModelViewSet):
 
 class StreetRoadPropertiesAPIView(generics.ListAPIView):
     serializer_class = PropertyInformationSerializer
-    permission_classes = [AllowAny]  # Changed from IsAuthenticated to AllowAny
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         street_id = self.kwargs['street_id']
@@ -116,7 +116,7 @@ class StreetRoadPropertiesAPIView(generics.ListAPIView):
 class StreetRoadUpdateAPIView(generics.UpdateAPIView):
     queryset = StreetRoadInformation.objects.all()
     serializer_class = StreetRoadInformationSerializer
-    permission_classes = [AllowAny]  # Changed from IsAuthenticated to AllowAny
+    permission_classes = [IsAuthenticated]
     lookup_field = 'pk'
 
     def patch(self, request, *args, **kwargs):
@@ -129,7 +129,7 @@ class StreetRoadUpdateAPIView(generics.UpdateAPIView):
 class PropertyInformationUpdateAPIView(generics.UpdateAPIView):
     queryset = PropertyInformation.objects.all()
     serializer_class = PropertyInformationSerializer
-    permission_classes = [AllowAny]  # Changed from IsAuthenticated to AllowAny
+    permission_classes = [IsAuthenticated]
     lookup_field = 'pk'
 
     def patch(self, request, *args, **kwargs):

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 px-4">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">
+                Update Concern Status
+            </h1>
+            <p class="text-sm text-gray-600">
+                Manage workflow for this development concern.
+            </p>
+        </div>
+
+        <a href="{% url 'concerns_list' %}"
+           class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50">
+            ← Back to Concerns
+        </a>
+    </div>
+
+    <!-- Concern summary -->
+    <div class="mb-6 bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+        <p class="text-xs uppercase tracking-wide text-gray-400 mb-2">
+            Concern Summary
+        </p>
+        <div class="grid md:grid-cols-2 gap-3 text-sm">
+            <div>
+                <p class="text-gray-500 font-medium">Developer</p>
+                <p class="text-gray-800">
+                    {{ concern.developer_name|default:"Not specified" }}
+                </p>
+            </div>
+            <div>
+                <p class="text-gray-500 font-medium">Reporter</p>
+                <p class="text-gray-800">
+                    {{ concern.reporter|default:"Unknown" }}
+                </p>
+            </div>
+            <div>
+                <p class="text-gray-500 font-medium">Location</p>
+                <p class="text-gray-800">
+                    {{ concern.zone_or_village|default:"-" }}
+                    {% if concern.road_name %}
+                        • {{ concern.road_name }}
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <p class="text-gray-500 font-medium">Submitted</p>
+                <p class="text-gray-800">
+                    {{ concern.submission_date|date:"M d, Y" }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form card -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+        <form method="post" class="space-y-5">
+            {% csrf_token %}
+
+            <!-- Status field -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Status
+                </label>
+                {{ form.status }}
+                {% if form.status.errors %}
+                    <p class="text-xs text-red-600 mt-1">
+                        {{ form.status.errors|join:", " }}
+                    </p>
+                {% endif %}
+                <p class="mt-1 text-xs text-gray-500">
+                    Choose the current workflow state for this concern.
+                </p>
+            </div>
+
+            <!-- Agent notes -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Agent Notes
+                </label>
+                {{ form.agent_notes }}
+                {% if form.agent_notes.errors %}
+                    <p class="text-xs text-red-600 mt-1">
+                        {{ form.agent_notes.errors|join:", " }}
+                    </p>
+                {% endif %}
+                <p class="mt-1 text-xs text-gray-500">
+                    Town Agent remarks / defence of the concern or property.
+                </p>
+            </div>
+
+            <!-- Confirmation notes -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Planner / Administrator Notes
+                </label>
+                {{ form.confirmation_notes }}
+                {% if form.confirmation_notes.errors %}
+                    <p class="text-xs text-red-600 mt-1">
+                        {{ form.confirmation_notes.errors|join:", " }}
+                    </p>
+                {% endif %}
+                <p class="mt-1 text-xs text-gray-500">
+                    Technical assessment, resolution details or final decision.
+                </p>
+            </div>
+
+            <!-- Submit -->
+            <div class="pt-4 flex items-center justify-between border-t border-gray-100">
+                <p class="text-xs text-gray-400">
+                    Last status: <span class="font-semibold text-gray-600">
+                        {{ concern.get_status_display }}
+                    </span>
+                </p>
+
+                <button type="submit"
+                        class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-md bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

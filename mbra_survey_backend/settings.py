@@ -177,4 +177,5 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 # Email settings
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
-ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+# ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+ADMIN_EMAIL = "atwanzirebroz@gmail.com"
